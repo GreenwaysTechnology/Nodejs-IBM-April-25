@@ -1,0 +1,10 @@
+const hello = require('./util')
+// const TodoService = require('./services/todo.service')
+// const todoService = require('./services/todo.service')
+const { findAll} = require('./services/todo.service')
+console.log(hello())
+
+// let todo = new TodoService()
+// console.log(todo.findAll())
+// console.log(todoService.findAll())
+console.log(findAll())
