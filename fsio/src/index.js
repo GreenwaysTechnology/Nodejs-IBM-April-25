@@ -1,22 +1,18 @@
-const fs = require('node:fs/promises')
-const path = require('node:path')
+const fs = require('node:fs');
+const path = require('node:path');
 
-async function write() {
-    let filePath = path.join(__dirname, 'assets/content.txt')
-    let options = {
-        encoding: 'UTF-8'
-    }
-    let content = 'Hello, this is a node.js file write example'
-    try {
-        await fs.writeFile(filePath, content, options)
-        console.log('File has been written successfully')
-    }
-    catch (err) {
-        console.log(err)
-    }
+const inputfileName = path.join(__dirname, 'assets/big.file');
+//write
+const outputFileName = path.join(__dirname, 'assets/bigcopy.file');
+
+const config = {
+      encoding: 'UTF-8'
 }
 
-async function main() {
-    await write()
-}
-main()
+//Back pressure handling
+const readerStream = fs.createReadStream(inputfileName, config);
+const writeStr = fs.createWriteStream(outputFileName, config);
+
+//backPressure streams
+//pipe method is simplest method which wraps resume,pasuse,drain 
+readerStream.pipe(writeStr);
