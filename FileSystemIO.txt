@@ -1,0 +1,228 @@
+....................................................................................
+			  IO apis
+....................................................................................
+1.file system io
+   file system io , how to read data from disk file
+2.network io
+
+
+File System IO:
+=>We can read and write files from the disk in  two ways
+  1.blocking way
+  2.nonblocking way
+=>We can read and write files using two mode
+  1.NonStreaming mode
+  2.Streaming mode
+=>All file operations are handled by
+  "Worker Threads" from Worker Thread Pool - either it is blocking or non blocking    io.
+=>Files are handled using callback style or promise style.
+=>Files operations are handled by "fs" module
+
+.....................................................................................
+			 File system operations
+....................................................................................
+
+How to read File using nonblocking pattern? using callbacks
+
+fs.readFile(path[, options], callback)
+
+path <string> | <Buffer> | <URL> | <integer> filename or file descriptor
+options <Object> | <string>
+ encoding <string> | <null> Default: null
+ flag <string> See support of file system flags. Default: 'r'.
+ signal <AbortSignal> allows aborting an in-progress readFile
+
+callback <Function>
+  err <Error> | <AggregateError>
+  data <string> | <Buffer>
+
+const fs = require('fs')
+
+const blockMe = message => console.log(message)
+//read file 
+const filePath = './src/assets/info.txt'
+const options = {
+    encoding: 'UTF-8'
+}
+blockMe('start')
+fs.readFile(filePath, options, (err, data) => {
+    if (err) throw err
+    console.log(data)
+})
+blockMe('end')
+
+
+How to read file using promises? Using custom promise
+
+const fs = require('node:fs')
+
+//read file 
+const filePath = './src/assets/info.txt'
+const options = {
+    encoding: 'UTF-8'
+}
+
+class FileOperation {
+    constructor() { }
+    // readFile(callback) {
+    //     fs.readFile(filePath, options, callback)
+    // }
+    readFile() {
+        return new Promise((resolve, reject) => {
+            fs.readFile(filePath, options, (err, data) => {
+                if (err) {
+                    reject(err``)
+                }
+                resolve(data)
+            })
+        })
+    }
+}
+
+async function main() {
+    let fileOperation = new FileOperation()
+    // fileOperation.readFile((err, data) => {
+    //     if (err) throw err;
+    //     console.log(data)
+    // })
+    // fileOperation.readFile()
+    //     .then(data => console.log(data))
+    //     .catch(err => console.log(err))
+    try {
+        const data = await fileOperation.readFile()
+        console.log(data)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+...............................
+Reading file using Built Promise api
+
+const filePromise = require('node:fs/promises');
+
+async function logFile() {
+    try {
+        const filePath = './src/assets/info.txt'
+        const contents = await filePromise.readFile(filePath, { encoding: 'utf8' });
+        console.log(contents);
+    } catch (err) {
+        console.error(err.message);
+    }
+}
+logFile();
+.....................................................................................
+
+How to read File using blocking pattern?
+
+const fs = require('fs')
+
+const path = './src/assets/info.txt'
+
+const options = {
+    encoding: 'UTF-8'
+}
+
+function blockMe(message) {
+    console.log(message)
+}
+//async api to read file
+blockMe('start')
+const data = fs.readFileSync(path, options)
+console.log(data)
+blockMe('end')
+
+
+How to use path module? and global variables
+
+
+The path module provides utilities for working with file and directory paths.
+
+-node provides lot of global variables
+
+__dirname  : current directory name
+C:\session\ibm\2021\june\nodemicroservices\nodeapps\src
+
+__filename :current directory name + fileName
+C:\session\ibm\2021\june\nodemicroservices\nodeapps\src\index.js
+.........................
+
+const fs = require('fs');
+const path = require('path')
+
+// const filePath = './src//assets/info.txt'
+const filePath = path.join(__dirname,'assets/info.txt')
+
+const options = {
+    encoding: 'UTF-8'
+}
+
+function blockMe(message) {
+    console.log(message)
+}
+//async api to read file
+blockMe('start')
+fs.readFile(filePath, options, (err, data) => {
+    if (err) throw err
+    console.log(data)
+})
+blockMe('end')
+.....................................................................................
+
+How to write data into file using nonblocking and blocking pattern?
+
+NonBlocking write using callbacks:
+
+const fs = require('node:fs')
+const path = require('node:path')
+
+function write() {
+    let filePath = path.join(__dirname, 'assets/content.txt')
+    let options = {
+        encoding: 'UTF-8'
+    }
+    let content = 'Hello, this is a node.js file write example'
+    fs.writeFile(filePath, content, options, (err) => {
+        if (err) {
+            console.log('Error writing file :', err)
+            return;
+        }
+        console.log('File has been written successfully!')
+    })
+}
+
+function main() {
+    write()
+}
+main()
+
+Write data into file using Promise api:
+const fs = require('node:fs/promises')
+const path = require('node:path')
+
+async function write() {
+    let filePath = path.join(__dirname, 'assets/content.txt')
+    let options = {
+        encoding: 'UTF-8'
+    }
+    let content = 'Hello, this is a node.js file write example'
+    try {
+        await fs.writeFile(filePath, content, options)
+        console.log('File has been written successfully')
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
+async function main() {
+    await write()
+}
+main()
+
+Task: How to write json data 
+.........................................................................................
+
+
+
