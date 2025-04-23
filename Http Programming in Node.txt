@@ -1,0 +1,415 @@
+		   Http Programming in Node
+.....................................................................................
+
+Node was created to build non blocking web server and web applications.
+Node provides single event loop thread which handles lot of concurrent http requests.
+Node offers high level http wrapper apis to talk to os apis.
+Node offers http as object.
+
+HTTP Objects
+
+1.Agent -  http.Agent
+  For handling connections between and server
+
+2.ClientRequest - http.clientRequest
+  For creating http clients
+
+3.Server - http.Server
+  For creating web servers, we can create app and deploy on top of server.
+  
+4.ServerResponse - http.ServerResponse
+  ServerResponse is outputstream of "http socket"
+
+5.IncomingMessage -http.IncomingMessage
+    The payload which is sent by client -  Message
+
+6.OutgoingMessage -http.OutgoingMessage
+    The data which is sent by server - Message
+
+7.Global Methods of http
+  
+ 1.createServer
+    factory method to create http server instance.
+
+HTTP events:
+ 
+ There are three types of events
+
+1.HTTP Request events
+  Which are triggered whenever client request is received by server
+
+request.on('nameoftheevent',listner)
+
+2.Http Response events
+   Which are triggered whenever server response is sent by server
+
+response.on('nameoftheevent',listner)
+
+3.Server Events
+   Server events are triggered during server startup,connection,handshake,request
+
+ server.on('nameoftheevent',listner)
+
+common events:
+data,close,end,error
+
+Note:
+ Each Object has its own events apart from common events.
+
+
+{
+  _connectionListener: [Function: connectionListener],
+  METHODS: [
+    'ACL',         'BIND',       'CHECKOUT',
+    'CONNECT',     'COPY',       'DELETE',
+    'GET',         'HEAD',       'LINK',
+    'LOCK',        'M-SEARCH',   'MERGE',
+    'MKACTIVITY',  'MKCALENDAR', 'MKCOL',
+    'MOVE',        'NOTIFY',     'OPTIONS',
+    'PATCH',       'POST',       'PROPFIND',
+    'PROPPATCH',   'PURGE',      'PUT',
+    'REBIND',      'REPORT',     'SEARCH',
+    'SOURCE',      'SUBSCRIBE',  'TRACE',
+    'UNBIND',      'UNLINK',     'UNLOCK',
+    'UNSUBSCRIBE'
+  ],
+  STATUS_CODES: {
+    '100': 'Continue',
+    '101': 'Switching Protocols',
+    '102': 'Processing',
+    '103': 'Early Hints',
+    '200': 'OK',
+    '201': 'Created',
+    '202': 'Accepted',
+    '203': 'Non-Authoritative Information',
+    '204': 'No Content',
+    '205': 'Reset Content',
+    '206': 'Partial Content',
+    '207': 'Multi-Status',
+    '208': 'Already Reported',
+    '226': 'IM Used',
+    '300': 'Multiple Choices',
+    '301': 'Moved Permanently',
+    '302': 'Found',
+    '303': 'See Other',
+    '304': 'Not Modified',
+    '305': 'Use Proxy',
+    '307': 'Temporary Redirect',
+    '308': 'Permanent Redirect',
+    '400': 'Bad Request',
+    '401': 'Unauthorized',
+    '402': 'Payment Required',
+    '403': 'Forbidden',
+    '404': 'Not Found',
+    '405': 'Method Not Allowed',
+    '406': 'Not Acceptable',
+    '407': 'Proxy Authentication Required',
+    '408': 'Request Timeout',
+    '409': 'Conflict',
+    '410': 'Gone',
+    '411': 'Length Required',
+    '412': 'Precondition Failed',
+    '413': 'Payload Too Large',
+    '414': 'URI Too Long',
+    '415': 'Unsupported Media Type',
+    '416': 'Range Not Satisfiable',
+    '417': 'Expectation Failed',
+    '418': "I'm a Teapot",
+    '421': 'Misdirected Request',
+    '422': 'Unprocessable Entity',
+    '423': 'Locked',
+    '424': 'Failed Dependency',
+    '425': 'Too Early',
+    '426': 'Upgrade Required',
+    '428': 'Precondition Required',
+    '429': 'Too Many Requests',
+    '431': 'Request Header Fields Too Large',
+    '451': 'Unavailable For Legal Reasons',
+    '500': 'Internal Server Error',
+    '501': 'Not Implemented',
+    '502': 'Bad Gateway',
+    '503': 'Service Unavailable',
+    '504': 'Gateway Timeout',
+    '505': 'HTTP Version Not Supported',
+    '506': 'Variant Also Negotiates',
+    '507': 'Insufficient Storage',
+    '508': 'Loop Detected',
+    '509': 'Bandwidth Limit Exceeded',
+    '510': 'Not Extended',
+    '511': 'Network Authentication Required'
+  },
+  Agent: [Function: Agent] { defaultMaxSockets: Infinity },
+  ClientRequest: [Function: ClientRequest],
+  IncomingMessage: [Function: IncomingMessage],
+  OutgoingMessage: [Function: OutgoingMessage],
+  Server: [Function: Server],
+  ServerResponse: [Function: ServerResponse],
+  createServer: [Function: createServer],
+  validateHeaderName: [Function: __node_internal_],
+  validateHeaderValue: [Function: __node_internal_],
+  get: [Function: get],
+  request: [Function: request],
+  setMaxIdleHTTPParsers: [Function: setMaxIdleHTTPParsers],
+  maxHeaderSize: [Getter],
+  globalAgent: [Getter/Setter]
+}
+
+////////////////////////////////////////////////////////////////////
+
+Simple WebServer:
+//import http module
+const http = require("node:http")
+
+//create server:
+
+const server = http.createServer((req, res) => {
+    //request and response handling code
+    res.write('hello')
+    res.end() //close the current connection
+})
+
+//start server
+server.listen(3000, () => {
+    console.log('Server is Running')
+})
+
+How to attach events?
+
+Server events:
+  request -event.
+...
+//import http module
+const http = require("node:http")
+
+//create server:
+
+const server = http.createServer((req, res) => {
+    //set header
+    const body = 'hello world';
+    res.writeHead(200, {
+        'Content-Length': Buffer.byteLength(body),
+        'Content-Type': 'text/plain',
+    });
+    res.write(body)
+    res.end() //close the current connection
+})
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req)
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+//start server
+server.listen(3000, () => {
+    console.log('Server is Running')
+})
+
+How to send json?
+
+//import http module
+const http = require("node:http")
+
+//create server:
+
+const server = http.createServer((req, res) => {
+    //set header
+    const body = {
+        message: 'Hello'
+    }
+    res.writeHead(200, {
+        'Content-Type': 'application/json',
+    });
+    res.write(JSON.stringify(body))
+    res.end() //close the current connection
+})
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req)
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+//start server
+server.listen(3000, () => {
+    console.log('Server is Running')
+})
+
+.....................................................................................
+Service with Modularation:
+..........................
+
+src/services/todo.service.js
+const TODOS = require('./todo')
+class TodoService {
+
+    //blocking api
+    // findAll() {
+    //     return TODOS
+    // }
+    //nonblocking with timer with callback
+    // findAll(resolve) {
+    //     setTimeout(resolve, 1000, TODOS)
+    // }
+    //nonblocking with timer with promise
+    findAll() {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, 1000, TODOS)
+        })
+    }
+}
+module.exports = new TodoService()
+
+Service with Blocking:
+//import http module
+const http = require("node:http")
+const todoService = require('./services/todo.service')
+
+//create server:
+
+const server = http.createServer((req, res) => {
+
+    res.writeHead(200, {
+        'Content-Type': 'application/json',
+    });
+    const body = todoService.findAll()
+    res.write(JSON.stringify(body))
+    res.end() //close the current connection
+})
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req)
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+//start server
+server.listen(3000, () => {
+    console.log('Server is Running')
+})
+
+service with Callback:
+//import http module
+const http = require("node:http")
+const todoService = require('./services/todo.service')
+
+//create server:
+
+const server = http.createServer((req, res) => {
+
+    todoService.findAll((todos) => {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+        });
+        res.write(JSON.stringify(todos))
+        res.end() //close the current connection
+    })
+
+})
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req)
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+//start server
+server.listen(3000, () => {
+    console.log('Server is Running')
+})
+
+Service with Promise then:
+//import http module
+const http = require("node:http")
+const todoService = require('./services/todo.service')
+
+//create server:
+
+const server = http.createServer((req, res) => {
+    todoService.findAll().then((todos) => {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+        });
+        res.write(JSON.stringify(todos))
+        res.end() //close the current connection
+    }).catch(err => {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+        });
+        res.write(JSON.stringify({ err: err }))
+        res.end() //close the current connection
+    })
+
+})
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req)
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+//start server
+server.listen(3000, () => {
+    console.log('Server is Running')
+})
+
+Service with async await:
+//import http module
+const http = require("node:http")
+const todoService = require('./services/todo.service')
+
+const server = http.createServer(async (req, res) => {
+    try {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+        });
+        const todos = await todoService.findAll()
+        res.end(JSON.stringify(todos))
+    }
+    catch (err) {
+        res.writeHead(200, {
+            'Content-Type': 'application/json',
+        });
+        res.end({ err: err }) //close the current connection
+    }
+})
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req)
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+//start server
+server.listen(3000, () => {
+    console.log('Server is Running')
+})
+
+How to read input?
+//import http module
+const http = require("node:http")
+
+// //set header
+// const body = 'hello world';
+// res.writeHead(200, {
+//     'Content-Type': 'text/plain',
+// });
+// res.end() //close the current connection
+
+const server = http.createServer((req, res) => {
+    let data = ''
+    req.on('data', (chunk) => {
+        //console.log(chunk.toString())
+        data += chunk
+    })
+    req.on('end', () => {
+        //you may send data to other io like db or file system.
+        res.end(data) //close the current connection
+    })
+
+})
+
+//server events
+server.on('request', (req, res) => {
+    //console.log(req)
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+//start server
+server.listen(3000, () => {
+    console.log('Server is Running')
+})
+..............................................................................................
