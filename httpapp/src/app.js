@@ -1,32 +1,37 @@
-const http = require('node:http')
-const { save } = require('./services/todo.service')
+const http = require('node:http');
+const fs = require('node:fs');
+const path = require('node:path');
 
-const PORT = 3000
-//create server
 const server = http.createServer((req, res) => {
-    //read data.
-    let data = ''
-    req.on('data', async (chunk) => {
-        data += chunk
-    })
-    req.on('end', async () => {
-        try {
-            const result = await save(data)
-            res.end(result)
-        }
-        catch (err) {
-            console.log(err)
-            res.end("Something went wrong")
-        }
-    })
-})
+    // Specify the file to be sent
+    const filePath = path.join(__dirname, 'uploaded_file.txt');
 
-//start server
-server.listen(PORT, () => {
-    console.log(`Server is Running at ${PORT}`)
-})
+    // Check the file exists
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('File not found');
+            return;
+        }
+        // Set headers
+        res.writeHead(200, {
+            'Content-Type': 'text/plain', // Change this based on file type
+            'Content-Disposition': 'attachment; filename="uploaded_file.txt"', // Suggests a download
+        });
 
-//server events
-server.on('request', (req, res) => {
-    console.log(new Date(), "URL is :: ", req.url, "method::", req.method)
-})
+        // Create a readable stream and pipe it to the response
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+
+        // Handle stream errors
+        fileStream.on('error', (streamErr) => {
+            console.error('Stream error:', streamErr);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Server error while reading the file');
+        });
+    });
+});
+
+server.listen(3000, () => {
+    console.log('Server running on port 3000');
+});

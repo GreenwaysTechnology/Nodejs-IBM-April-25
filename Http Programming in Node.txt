@@ -51,7 +51,10 @@ response.on('nameoftheevent',listner)
  server.on('nameoftheevent',listner)
 
 common events:
-data,close,end,error
+
+
+
+
 
 Note:
  Each Object has its own events apart from common events.
@@ -413,3 +416,133 @@ server.listen(3000, () => {
     console.log('Server is Running')
 })
 ..............................................................................................
+..............................................................................................
+  How to transfer(upload) file to webserver and return file(download) from webserver
+
+
+Http methods:
+GET
+POST
+PUT
+DELETE
+
+Upload File:
+
+//Upload file from client
+const http = require('node:http');
+const fs = require('node:fs');
+
+const server = http.createServer((req, res) => {
+    if (req.method === "POST") {
+        const fileStream = fs.createWriteStream('uploaded_file.txt');
+        //inputstream.pipe(outputstream)
+        req.pipe(fileStream); // Pipe the request data into the file
+        req.on('end', () => {
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end('File saved successfully!');
+        });
+    } else {
+        res.writeHead(405, { 'Content-Type': 'text/plain' });
+        res.end('Only POST method is supported');
+    }
+
+})
+
+server.listen(3000, () => {
+    console.log('Server is up and running!')
+});
+
+server.on('request', (req, res) => {
+    console.log('Request Recived on', new Date(), "URL is", req.url, "method ", req.method)
+})
+.............................................................................................
+				Download
+............................................................................................
+const http = require('node:http');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const server = http.createServer((req, res) => {
+    // Specify the file to be sent
+    const filePath = path.join(__dirname, 'example.txt');
+
+    // Check the file exists
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('File not found');
+            return;
+        }
+
+        // Set headers
+        res.writeHead(200, {
+            'Content-Type': 'text/plain', // Change this based on file type
+            'Content-Disposition': 'attachment; filename="example.txt"', // Suggests a download
+        });
+
+        // Create a readable stream and pipe it to the response
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+
+        // Handle stream errors
+        fileStream.on('error', (streamErr) => {
+            console.error('Stream error:', streamErr);
+            res.writeHead(500, { 'Content-Type': 'text/plain' });
+            res.end('Server error while reading the file');
+        });
+    });
+});
+
+server.listen(3000, () => {
+    console.log('Server running on port 3000');
+});
+.....................................................................................
+		   Building RestFull web services
+.....................................................................................
+
+1.Resources
+   Customer, Product, Item, Payment
+2.API
+   findAll,findBYId,update,Remove,filter
+
+3.URL 
+   Resources and apis must be identified by URL
+
+4.APIs are mapped against HTTP verbs
+  Read - GET
+  Save  -POST
+  update - PUT
+  remove -  DELETE
+
+
+Each Resource is identified by unique url
+
+  /api/customer
+  /api/products
+
+Each Resource has collection of apis and which mapped against HTTP verbs
+
+ findAll - GET
+
+Having core node.js http module we cant build production ready webservices with minimum code, we need to write plenty of boiler plate code.
+
+Node.js team in the beginning started working on an abstraction called "framework"
+			   "Express.js"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
