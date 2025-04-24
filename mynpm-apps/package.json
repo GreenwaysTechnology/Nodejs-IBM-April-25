@@ -1,0 +1,24 @@
+{
+  "name": "mynpm-apps",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prestart": "echo Welcome to Script",
+    "start": "nodemon src/index.js",
+    "poststart": "echo Good Bye!",
+    "subu": "nodemon src/index.js",
+    "build": "npm start && npm run subu"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "chai": "^5.2.0",
+    "nodemon": "^3.1.10"
+  }
+}
