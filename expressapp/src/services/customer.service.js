@@ -26,6 +26,7 @@ class CustomerService {
         })
     }
     save(customer) {
+        console.log(customer)
         return Promise.resolve(customer)
     }
 }

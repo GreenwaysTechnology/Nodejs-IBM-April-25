@@ -46,17 +46,28 @@ customerRouter.get('/:id', async (req, res) => {
     }
 })
 //Post 
+// customerRouter.post('/', async (req, res) => {
+//     try {
+//         //read customers
+//         let data=''
+//         req.on('data',(chunk)=>{
+//             data+=chunk
+//         })
+//         req.on('end',async ()=>{
+//             const customer = await save(data)
+//             res.status(201).json(customer)
+//         })
+//     }
+//     catch (err) {
+//         res.json({ err: err })
+//     }
+// })
+
 customerRouter.post('/', async (req, res) => {
     try {
-        //read customers
-        let data=''
-        req.on('data',(chunk)=>{
-            data+=chunk
-        })
-        req.on('end',async ()=>{
-            const customer = await save(data)
-            res.status(201).json(customer)
-        })
+        const customer = req.body 
+        const customer1 = await save(customer)
+        res.status(201).json(customer1)
     }
     catch (err) {
         res.json({ err: err })
