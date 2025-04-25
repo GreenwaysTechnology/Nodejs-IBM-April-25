@@ -4,6 +4,20 @@ const { findAll, findById, save } = require('../services/customer.service')
 
 const customerRouter = express.Router()
 
+//middlware 
+customerRouter.use(function(req,res,next){
+    console.log('customer router url with any method')
+    next()
+})
+customerRouter.get('/', function (req, res, next) {
+    console.log('customer get middleware')
+    res.set({
+        'customer': 'CUSTOMER GET'
+    })
+    next()
+})
+
+
 //apis
 customerRouter.get('/', async (req, res) => {
     try {
