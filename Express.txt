@@ -16,7 +16,7 @@ Core features of Express:
 1.Abstraction on core http module
 2.lot of apis to send data like json api
 3.routers : to create HTTP based web services and apps quickly.
-4.middlewares : to extend core framework like - logging, database,security, templates...
+4.middlewares : to extend core framework like - logging, database, security, templates...
 
 Types of distributed Apps:
 
@@ -213,3 +213,301 @@ app.get('/api/customers', async (req, res) => {
 const server = app.listen(PORT, () => {
     console.log(`Express server is running at ${server.address().port}`)
 })
+..............................................................................................
+Router:
+
+src/routers/product.router.js
+const express = require('express')
+const productService = require('../services/product.service')
+//create Router Object
+const productRouter = express.Router()
+
+productRouter.get('/', async (req, res) => {
+    try {
+        const products = await productService.findAll();
+        res.json(products)
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+productRouter.post('/', async (req, res) => {
+    try {
+        const product = await productService.save();
+        res.json({ product })
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+
+module.exports = productRouter
+
+src/routers/customer.router.js
+const express = require('express')
+const customerServicce = require('../services/customer.service')
+//create Router Object
+const customerRouter = express.Router()
+
+//apis - get,getById,save,delete,update
+//api/customers/
+customerRouter.get('/', async (req, res) => {
+    try {
+        const users = await customerServicce.findAll();
+        res.json(users)
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+customerRouter.post('/', async (req, res) => {
+    try {
+        const user = await customerServicce.save();
+        res.json(user)
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+
+module.exports = customerRouter
+
+src/app.js
+const express = require('express')
+// const customerRouter = require('./routers/customer.router')
+require('dotenv').config()
+const app = express()
+
+//Configure the router with application object
+// app.use('/api/customers', customerRouter)
+app.use('/api/customers', require('./routers/customer.router'))
+app.use('/api/products', require('./routers/products.router'))
+
+const PORT = process.env.PORT || 3000
+
+
+const server = app.listen(PORT, () => {
+    console.log(`Express server is running at ${server.address().port}`)
+})
+.............................................................................................
+.....................................................................................
+.....................................................................................
+			  Dynamic Parameters : PATH PARAM
+.....................................................................................
+
+eg:
+
+ GET /api/customers/1 
+ GET /api/customers/2 
+
+How to read paramter
+
+router | app.get('/:id',(req,res)=>{
+  const id = req.params.id
+})
+
+eg:
+
+
+const CUSTOMERS = [{
+    id: 1,
+    name: 'Subramanian',
+    location: 'Coimbatore'
+}]
+
+class CustomerService {
+
+    findAll() {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, 1000, CUSTOMERS)
+        })
+    }
+    findById(id) {
+        return CUSTOMERS.find(customer => customer.id === id)
+    }
+    async save() {
+        return "save"
+    }
+}
+module.exports = new CustomerService()
+
+
+Router:
+const express = require('express')
+const customerServicce = require('../services/customer.service')
+//create Router Object
+const customerRouter = express.Router()
+
+//apis - get,getById,save,delete,update
+//api/customers/
+customerRouter.get('/', async (req, res) => {
+    try {
+        const users = await customerServicce.findAll();
+        res.json(users)
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+customerRouter.get('/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id)
+        const customer = await customerServicce.findById(id);
+        if (customer) {
+            return res.json(customer)
+        }
+        return res.status(500).json({ err: `Requestd Customer ${id} Not Found` })
+
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+customerRouter.post('/', async (req, res) => {
+    try {
+        const user = await customerServicce.save();
+        res.json(user)
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+
+module.exports = customerRouter
+
+Testing:
+GET localhost:3000/api/customers/1
+
+{
+    "id": 1,
+    "name": "Subramanian",
+    "location": "Coimbatore"
+}
+
+GET localhost:3000/api/customers/2
+
+{
+    "err": "Requestd Customer 2 Not Found"
+}
+....................................................................................
+			Dynamic Parameters : Query Parameters
+
+URL Pattern:
+localhost:3000/api/customers/filter?city=chennai&state=TN
+
+customerRouter.get('/filter', async (req, res) => {
+    try {
+        const params = req.query
+        console.log(params)
+        return res.status(200).json({ message: params })
+    }
+    catch (err) {
+        return res.status(500).json({ err })
+    }
+})
+
+
+output:
+Express Web Server is running at 3000
+{ city: 'chennai' }
+{ city: 'chennai', state: 'TN' }
+
+or 
+customerRouter.get('/filter', async (req, res) => {
+    try {
+        // const params = req.query
+        // console.log(params)
+        // return res.status(200).json({ message: params })
+        const { city, state } = req.query
+        return res.status(200).json({ city, state })
+    }
+    catch (err) {
+        return res.status(500).json({ err })
+    }
+})
+....................................................................................
+			Payload
+...................................................................................
+
+Service
+const CUSTOMERS = [{
+    id: 1,
+    name: 'Subramanian',
+    location: 'Coimbatore'
+}]
+
+class CustomerService {
+
+    findAll() {
+        return new Promise((resolve, reject) => {
+            setTimeout(resolve, 1000, CUSTOMERS)
+        })
+    }
+    async findById(id) {
+        return CUSTOMERS.find(customer => customer.id === id)
+    }
+    async save(customer) {
+        return CUSTOMERS.concat(customer)
+    }
+}
+module.exports = new CustomerService()
+
+
+Router
+const express = require('express')
+const customerServicce = require('../services/customer.service')
+//create Router Object
+const customerRouter = express.Router()
+
+//apis - get,getById,save,delete,update
+//api/customers/
+customerRouter.get('/', async (req, res) => {
+    try {
+        const users = await customerServicce.findAll();
+        res.json(users)
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+customerRouter.get('/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id)
+        const customer = await customerServicce.findById(id);
+        if (customer) {
+            return res.json(customer)
+        }
+        return res.status(500).json({ err: `Requestd Customer ${id} Not Found` })
+
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+customerRouter.post('/', (req, res) => {
+    try {
+        let customer = ''
+        req.on('data', (chunk) => {
+            customer += chunk
+        })
+        req.on('end', async () => {
+            const customerObj = JSON.parse(customer)
+            const users = await customerServicce.save(customerObj)
+            return res.status(201).json(users)
+        })
+    }
+    catch (err) {
+        res.json({ err: err })
+    }
+})
+
+
+module.exports = customerRouter

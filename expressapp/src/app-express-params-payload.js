@@ -1,9 +1,10 @@
 const express = require('express')
-require('dotenv').config()
-
-const PORT = process.env.PORT || 3000
+// const customerRouter = require('./routers/customer.router')
+const PORT = 3000
 const app = express()
 
+//bind the router with router
+// app.use('/api/customers',customerRouter)
 app.use('/api/customers', require('./routers/customer.router'))
 app.use('/api/products', require('./routers/products.router'))
 
