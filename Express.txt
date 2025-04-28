@@ -522,7 +522,7 @@ Middlewares:
  
  Middleware is JavaScript function that have access request object and response and next function in the application request response cycle.
   
- The difference between normal function which handles req and response with express , express takes thrird arg
+ The difference between normal function which handles req and response with express , express takes third arg
 
  normal function
   app.get('url',(req,res)=>{})
@@ -1035,7 +1035,7 @@ module.exports = UserRouter;
 ....................................................................................
 
 What is CORS?
- Internet browsers usually block access to unindefined websites from your services and apis.
+ Internet browsers usually block access to undefined websites from your services and apis.
  Implementing this module enable your server to share its resources solely with clients who reside in the same domain as yours.
 
  CORS an HTTP header based mechanism implemented by browsers, enables a server or api to specific any origins
@@ -1162,3 +1162,420 @@ In the browser console.
 content_script_bundle.js:1 Attempting initialization Mon Jul 15 2024 20:48:41 GMT+0530 (India Standard Time)
 index.html:1 Access to fetch at 'http://localhost:3001/api/customers/1' from origin 'http://127.0.0.1:5500' has been blocked by CORS policy: The 'Access-Control-Allow-Origin' header has a value 'http://www.abce.com' that is not equal to the supplied origin. Have the server send the header with a valid value, or, if an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.Understand this error
 index.html:13 
+............................................................................................
+..............................................................................................
+				 Logger
+............................................................................................
+
+In Express, we have many logger implementation ...
+
+Morgan:
+   HTTP request logger middleware for node.js
+
+How to use Morgan
+
+Steps:
+
+npm install morgan
+
+
+configuration:
+
+const express = require('express');
+require('dotenv').config()
+const morgan = require('morgan')
+const fs = require('node:fs')
+const path = require('node:path')
+const PORT = process.env.PORT || 3000
+const app = express()
+
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+//register logger
+// app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+app.use(morgan('combined', { stream: accessLogStream }))
+
+app.use('/api/customers', require('./routers/customer.router'))
+app.use('/api/products', require('./routers/products.router'))
+
+const server = app.listen(PORT, () => {
+    console.log(server.address())
+    console.log(`Express server is running @ ${server.address().port}`)
+});
+.............................................................................................
+				 Database Integration
+.............................................................................................
+
+Now a days data storage is basically classified into two category.
+
+1.SQL Based
+2.No SQL Based
+  1.Key-value pair
+  2.Document based 
+  3.column based
+  4.graph based
+
+Products 
+1.SQL
+  Oracle
+  Microsoft SQL server
+  MySQL
+  DB2
+  Postgress 
+  MariaDB
+ etc...
+
+2.NoSQL
+ 1.Key-value pair
+    Redis
+ 2.Document oriented
+   Mongodb
+ 3.Column based
+   Aws dynamo 
+ 4.Graph based
+     neo4j
+
+Note:
+ From node.js(express) , we can connect and work with all databases, if there is drivers and apis for those databases
+
+In order to connect with databases, application frameworks offers the frameworks which makes code more simple and abstract database operations
+
+Mongodb frameworks: 
+ ODM - Object Document Modeling framework 
+Steps:
+
+1.Make sure mongodb is installed or try to use mongodb cloud
+
+2.create project 
+G:\IBM\2024\Oct\NodeJs>mkdir expressMonogoose
+G:\IBM\2024\Oct\NodeJs>cd expressMonogoose
+G:\IBM\2024\Oct\NodeJs\expressMonogoose>
+
+3.G:\IBM\2024\Oct\NodeJs\expressMonogoose>npm init --yes
+Wrote to G:\IBM\2024\Oct\NodeJs\expressMonogoose\packa
+
+4.install dependencies
+npm i express
+npm install mongoose --save
+npm i nodemon --save-dev
+npm i body-parser
+npm i dotenv
+
+
+Connection Testing:
+
+.env
+PORT=3000
+DATABASE_URL=DATABASE_URL=mongodb+srv://subugee:subugee222@cluster0.shfpbhv.mongodb.net/myDatabase?retryWrites=true&w=majority&appName=Cluster0
+
+src/app.js
+require('dotenv').config()
+const express = require('express')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+
+const app = express()
+
+async function connectDb() {
+    try {
+        await mongoose.connect(process.env.DATABASE_URL)
+        console.log('Database has been connected')
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+connectDb()
+
+
+const PORT = process.env.PORT || 3000
+
+expressMonogoose>npm start
+
+> expressmonogoose@1.0.0 start
+> nodemon src/app.js
+
+[nodemon] 3.1.10
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,cjs,json
+[nodemon] starting `node src/app.js`
+Database has been connected
+
+
+Start web server:
+ Web server can be started in two ways
+
+1.After connecting only database successfully, then start webserver
+
+require('dotenv').config()
+const express = require('express')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+
+const PORT = process.env.PORT || 3000
+
+const app = express()
+
+async function connectDb() {
+    try {
+        await mongoose.connect(process.env.DATABASE_URL)
+        console.log('Database has been connected')
+        //webserver startup
+        const server = app.listen(PORT, () => {
+            console.log(server.address())
+            console.log(`Express is running @ ${server.address().port}`)
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+connectDb()
+
+
+2.i dont care about connection with database still i have to connect  webserver
+require('dotenv').config()
+const express = require('express')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+
+const PORT = process.env.PORT || 3000
+
+const app = express()
+
+async function connectDb() {
+    try {
+        await mongoose.connect(process.env.DATABASE_URL)
+        console.log('Database has been connected')
+     }
+    catch (err) {
+        console.log(err)
+    }
+}
+connectDb()
+
+const server = app.listen(PORT, () => {
+     console.log(server.address())
+     console.log(`Express is running @ ${server.address().port}`)
+ })
+
+
+Schemas and Models:
+
+ Schemas is fundamental unit to describe the data and its structure in mongoose.
+ schema is like a class, models are like instance of the class.
+
+1.define schema
+   plan for your collection
+const mongoose = require('mongoose')
+
+const schema = mongoose.schema({
+    title:String,
+    content:String
+})
+Datatypes:
+1.String
+2.Number
+3.Date
+4.Buffer
+5.Boolean
+6.Mixed
+7.ObjectId
+8.Array
+9.Decimal128
+10.Map
+11.UUID
+
+2.create model out of schema
+
+src/models/post.model.js
+const mongoose = require('mongoose')
+
+//define schema
+const postSchema = mongoose.Schema({
+    title: String,
+    content: String
+})
+//create model out of schema
+module.exports = mongoose.model("Post", postSchema)
+
+
+3.CURD operations:
+  Using model you can insert ,delete,query,update "Documents"
+
+Full code
+
+src/models/post.model.js
+const mongoose = require('mongoose')
+
+//define schema
+const postSchema = mongoose.Schema({
+    title: String,
+    content: String
+})
+//create model out of schema
+module.exports = mongoose.model("Post", postSchema)
+
+src/app/services/post.service.js
+const Post = require('../models/post.model')
+
+class PostService {
+
+    //apis to talk to database
+
+    async save({ title, content }) {
+        const newPost = new Post({ title, content })
+        //call method of mongoose
+        await newPost.save()
+        return newPost
+    }
+
+    async findAll() {
+        const posts = await Post.find({})
+        return posts
+    }
+    async findById(id) {
+        const post = await Post.findOne({ _id: id })
+        return post
+    }
+    //update
+    async update(id, { title, content }) {
+        const post = await Post.findOne({ _id: id })
+        if (!post) {
+            throw Error()
+        }
+        if (title) {
+            //update title
+            post.title = title
+        }
+        if (content) {
+            post.content = content
+        }
+        await post.save()
+        return post
+    }
+
+    async remove(id){
+        const post = await Post.findOne({_id:id})
+        if(post){
+            await Post.deleteOne({_id:id})
+        }
+        else {
+            throw Error()
+        }
+    }
+
+}
+
+module.exports = new PostService()
+
+
+src/app/routers/post.router.js
+const express = require('express')
+const postService = require('../services/post.service')
+const postRouter = express.Router()
+
+
+postRouter.post('/', async (req, res) => {
+    const post = req.body
+    try {
+        const savedPost = await postService.save(post)
+        res.status(201).json(savedPost)
+    }
+    catch (err) {
+        res.status(400).json({ err })
+    }
+})
+
+postRouter.get('/', async (req, res) => {
+    try {
+        const posts = await postService.findAll()
+        res.json(posts)
+    }
+    catch (err) {
+        res.status(400).json({ err })
+    }
+})
+
+postRouter.get('/:id', async (req, res) => {
+    const id = req.params.id
+    try {
+        const post = await postService.findById(id)
+        if (post) {
+            res.json(post)
+        } else {
+            res.json({ message: 'No Post Available' })
+        }
+    }
+    catch (err) {
+        res.status(400).json({ err })
+
+    }
+})
+
+postRouter.put('/:id', async (req, res) => {
+    const id = req.params.id
+    const postInput = req.body
+    try {
+        const post = await postService.update(id, postInput)
+        res.json(post)
+    }
+    catch (err) {
+        res.status(400).json({ err })
+    }
+})
+postRouter.delete('/:id', async (req, res) => {
+    const id = req.params.id
+    try {
+        await postService.remove(id)
+        res.status(204).send()
+    }
+    catch (err) {
+        res.status(400).json({ err })
+    }
+})
+
+module.exports = postRouter
+
+
+src/app.js
+require('dotenv').config()
+const express = require('express')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+
+const PORT = process.env.PORT || 3000
+
+const app = express()
+
+app.use(bodyParser.json())
+
+app.use('/api/posts', require('./routers/post.router'))
+
+async function connectDb() {
+    try {
+        await mongoose.connect(process.env.DATABASE_URL)
+        console.log('Database has been connected')
+        //webserver startup
+        const server = app.listen(PORT, () => {
+            console.log(server.address())
+            console.log(`Express is running @ ${server.address().port}`)
+        })
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+connectDb()
+
+// const server = app.listen(PORT, () => {
+//     console.log(server.address())
+//     console.log(`Express is running @ ${server.address().port}`)
+// })
+
+
+project/.env
+PORT=3000
+DATABASE_URL=mongodb+srv://subugee:subugee222@cluster0.shfpbhv.mongodb.net/myDatabase?retryWrites=true&w=majority&appName=Cluster0
+...........................*************...................................................
