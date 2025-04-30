@@ -1436,6 +1436,7 @@ Steps:
 
 docker run  --name nats-main -p 4222:4222 -p 6222:6222 -p 8222:8222 nats
 
+
 2.you need to install driver for connecting third message broker.
  
 incase of nat
@@ -1446,8 +1447,124 @@ incase of nat
 const broker = new ServiceBroker({
     transporter:"nats://localhost:4222"
 })
+...........................................................................................................................................................................................
+...................................................................................
+			Service Life cycle methods
+....................................................................................
 
+const { ServiceBroker } = require('moleculer')
+const broker = new ServiceBroker()
 
+broker.createService({
+    name: "math",
+    actions: {
+        add: {
+            //meta information
+            params: {
+                a: { type: "number", positive: true, integer: true, default: 0 },
+                b: { type: "number", positive: true, integer: true, default: 0 }
+            },
+            handler(ctx) {
+                const { a, b } = ctx.params
+                return this.add(a, b)
+            }
+        }
+    },
+    methods: {
+        add(a, b) {
+            return a + b
+        }
+    },
+    //life cycle methods
+    created() {
+        console.log('service is created')
+    },
+    merged() {
+        console.log('service is merged')
+    },
+    async started() {
+        console.log('service is started ')
+    },
+    async stoped() {
+        console.log('service is stopped')
+    }
+})
+
+async function main() {
+    try {
+        await broker.start()
+        //will start interactive commandline tool
+        broker.repl()
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+....................................................................................
+			Broker life cycle methods
+....................................................................................
+const { ServiceBroker } = require('moleculer')
+
+const broker = new ServiceBroker({
+    created(broker) {
+        console.log('broker created')
+    },
+    started(broker) {
+        console.log('broker started')
+    },
+
+    stopped(broker) {
+        console.log('broker is stopped')
+    }
+})
+
+broker.createService({
+    name: "math",
+    actions: {
+        add: {
+            //meta information
+            params: {
+                a: { type: "number", positive: true, integer: true, default: 0 },
+                b: { type: "number", positive: true, integer: true, default: 0 }
+            },
+            handler(ctx) {
+                const { a, b } = ctx.params
+                return this.add(a, b)
+            }
+        }
+    },
+    methods: {
+        add(a, b) {
+            return a + b
+        }
+    },
+    //life cycle methods
+    created() {
+        console.log('service is created')
+    },
+    merged() {
+        console.log('service is merged')
+    },
+    async started() {
+        console.log('service is started ')
+    },
+    async stoped() {
+        console.log('service is stopped')
+    }
+})
+
+async function main() {
+    try {
+        await broker.start()
+        //will start interactive commandline tool
+        broker.repl()
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
 
 
 

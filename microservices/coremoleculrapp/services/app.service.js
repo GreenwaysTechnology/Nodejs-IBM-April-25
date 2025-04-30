@@ -1,24 +1,22 @@
 const { ServiceBroker } = require('moleculer')
 
-//create Broker(Container) instance
-const broker = new ServiceBroker()
+const broker = new ServiceBroker({
+    created(broker) {
+        console.log('broker created')
+    },
+    started(broker) {
+        console.log('broker started')
+    },
 
+    stopped(broker) {
+        console.log('broker is stopped')
+    }
+})
 broker.createService({
     name: 'math',
     actions: {
-        //syntax 1: 
-        add(ctx) {
-            const { a, b } = ctx.params
-            return a + b
-        },
-        //syntax 2:
+        //public method
         multiply: {
-            //extra configuration for this method
-            //validation rules for input params
-            // params: {
-            //     a: "number",
-            //     b: "number"
-            // },
             params: {
                 a: {
                     type: 'number',
@@ -28,9 +26,29 @@ broker.createService({
             },
             handler(ctx) {
                 const { a, b } = ctx.params
-                return a * b
+                //invoke private methods
+                return this.multiply(a, b)
             }
         }
+    },
+    methods: {
+        //to define private methods
+        multiply(a, b) {
+            return a * b
+        }
+    },
+    //life cycle methods
+    created() {
+        console.log('service is created')
+    },
+    merged() {
+        console.log('service is merged')
+    },
+    async started() {
+        console.log('service is started ')
+    },
+    async stoped() {
+        console.log('service is stopped')
     }
 })
 
@@ -39,9 +57,7 @@ async function main() {
     //start the broker : broker is not web server, just runtime.
     try {
         await broker.start()
-        const add = await broker.call('math.add', { a: 10, b: 20 })
-        const multiply = await broker.call('math.multiply', { a: 10, b: 30 })
-        console.log(`Add ${add} Multiply ${multiply}`)
+        broker.repl()
     }
     catch (err) {
         console.log(err)
