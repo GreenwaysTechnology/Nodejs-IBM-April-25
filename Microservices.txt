@@ -674,3 +674,341 @@ Each node must have an instance of Service Broker.
  The gateway is a regular Moleculer service running a (HTTP, WebSockets, etc.) server. It handles the incoming requests, maps them into service calls, and then returns appropriate responses.
 
 .........................................................................................................................................................................
+
+.....................................................................................
+			Coding -Getting started
+
+
+Service Types:
+
+1.Back end services - It is not exposed as "REST" API
+2.Front end Services  -It is rest apis.
+
+
+Project setup :
+
+1.using tool Moleculer cli tool
+2.without using any tool.
+
+Project creation:
+.................
+ just simple node project.
+
+G:\IBM\2024\Oct\NodeJs\microservices>mkdir basicapp
+
+G:\IBM\2024\Oct\NodeJs\microservices>cd basicapp
+
+G:\IBM\2024\Oct\NodeJs\microservices\basicapp>
+
+:\IBM\2024\Oct\NodeJs\microservices\basicapp>npm init --yes
+Wr
+
+G:\IBM\2024\Oct\NodeJs\microservices\basicapp>mkdir services
+
+
+HelloWorld:
+
+const { ServiceBroker } = require('moleculer')
+
+//create Broker(Container) instance
+const broker = new ServiceBroker()
+
+//create Service
+broker.createService({
+    name: 'hello',
+    //biz logic 
+    actions: {
+        //biz logic
+        sayHello() {
+            return 'Hello'
+        }
+    }
+})
+
+//main function
+async function main() {
+    //start the broker : broker is not web server, just runtime.
+    try {
+        await broker.start()
+        //invoke service methods
+        const result = await broker.call('hello.sayHello')
+        console.log(result)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+Multi Methods:
+const { ServiceBroker } = require('moleculer')
+
+//create Broker(Container) instance
+const broker = new ServiceBroker()
+
+//create Service
+broker.createService({
+    name: 'greet',
+    //biz logic 
+    actions: {
+        //biz logic
+        sayHello() {
+            return 'Hello'
+        },
+        sayHai() {
+            return 'Hai'
+        },
+        sayGreet() {
+            return 'Greet'
+        }
+    }
+})
+
+//main function
+async function main() {
+    //start the broker : broker is not web server, just runtime.
+    try {
+        await broker.start()
+        //invoke service methods
+        const hello = await broker.call('greet.sayHello')
+        const hai = await broker.call('greet.sayHai')
+        const greet = await broker.call('greet.sayGreet')
+        console.log(hello,hai,greet)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+Multi services:
+const { ServiceBroker } = require('moleculer')
+
+//create Broker(Container) instance
+const broker = new ServiceBroker()
+
+//create Service
+broker.createService({
+    name: 'greet',
+    //biz logic 
+    actions: {
+        //biz logic
+        sayHello() {
+            return 'Hello'
+        },
+        sayHai() {
+            return 'Hai'
+        },
+        sayGreet() {
+            return 'Greet'
+        }
+    }
+})
+
+broker.createService({
+    name: 'math',
+    actions: {
+        add() {
+            return 10 + 10
+        },
+        multiply() {
+            return 10 * 10
+        }
+    }
+})
+
+//main function
+async function main() {
+    //start the broker : broker is not web server, just runtime.
+    try {
+        await broker.start()
+        //invoke service methods
+        const hello = await broker.call('greet.sayHello')
+        const hai = await broker.call('greet.sayHai')
+        const greet = await broker.call('greet.sayGreet')
+
+        const add = await broker.call('math.add')
+        const multiply= await broker.call('math.multiply')
+        console.log(hello, hai, greet)
+
+        console.log(`Add ${add} Multiply ${multiply}`)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+.....................................................................................
+			    Service api parameters
+....................................................................................
+
+How to pass params to Service methods? How to read args from the service Method?
+
+Parameters are stored inside special object called "Context"
+
+Context Object:
+
+1.Similar to Broker Object
+2.It has all capacity of Broker object
+3.Context object is used inside service definitions , where ever you require broker
+  Object reference.
+
+context object already created, and its reference is available inside "Service method" as args.
+
+Reading parameters
+
+1.context.params 
+  params are literal object what ever parameter we pass, it will be inside ctx
+
+context.params.variable
+
+
+
+
+//start:
+const { ServiceBroker } = require('moleculer')
+
+//create service Broker instance
+const broker = new ServiceBroker()
+
+//create service: which represents biz logic
+broker.createService({
+    name: "hello",
+    actions: {
+        //here we write biz logic
+        sayHello(ctx) {
+            console.log(ctx.params)
+            return `Hello ${ctx.params.name}`
+        },
+    }
+})
+broker.createService({
+    name: "math",
+    actions: {
+        //here we write biz logic
+        add(ctx) {
+            const { a, b } = ctx.params
+            const res = a + b 
+            return `Result = ${res}`
+        },
+    }
+})
+
+
+
+async function main() {
+    try {
+        //start service broker: start webserver
+        await broker.start()
+        //invoke service methods
+        const hello = await broker.call('hello.sayHello', { name: 'Subramanian' })
+        console.log(hello)
+        const result = await broker.call('math.add', { a: 10, b: 20 })
+        console.log(result)
+
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+
+....................................................................................
+			  Input param validation and action syntax
+....................................................................................
+
+Actions are written using two syntax
+
+Syntax : 1
+
+broker.createService({
+    name: "math",
+    actions: {
+       add(ctx) {
+            const { a, b } = ctx.params
+            const res = a + b 
+            return `Result = ${res}`
+        },
+    }
+})
+
+Syntax : 2:
+
+
+broker.createService({
+    name: "math",
+    actions: {
+      add: {
+         //method meta information
+        handler(ctx){
+          //biz logic
+       }   
+      }
+    }
+})
+
+
+
+const { ServiceBroker } = require('moleculer')
+
+//create Broker(Container) instance
+const broker = new ServiceBroker()
+
+broker.createService({
+    name: 'math',
+    actions: {
+        //syntax 1: 
+        add(ctx) {
+            const { a, b } = ctx.params
+            return a + b
+        },
+        //syntax 2:
+        multiply: {
+            //extra configuration for this method
+            //validation rules for input params
+            // params: {
+            //     a: "number",
+            //     b: "number"
+            // },
+            params: {
+                a: {
+                    type: 'number',
+                    positive: true,
+                    integer: true
+                }
+            },
+            handler(ctx) {
+                const { a, b } = ctx.params
+                return a * b
+            }
+        }
+    }
+})
+
+//main function
+async function main() {
+    //start the broker : broker is not web server, just runtime.
+    try {
+        await broker.start()
+        const add = await broker.call('math.add', { a: 10, b: 20 })
+        const multiply = await broker.call('math.multiply', { a: 10, b: 30 })
+        console.log(`Add ${add} Multiply ${multiply}`)
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+
+
+
+
+
+
+
+
+
+
