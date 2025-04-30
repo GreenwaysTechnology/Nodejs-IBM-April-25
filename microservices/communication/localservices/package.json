@@ -1,0 +1,20 @@
+{
+  "name": "localservices",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node services/app.service.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "moleculer": "^0.14.35"
+  },
+  "devDependencies": {
+    "moleculer-repl": "^0.7.4"
+  }
+}
