@@ -1005,7 +1005,6 @@ For More advanced validation rules for all types of variables in js.
 https://github.com/icebob/fastest-validator
 
 ***********************************************************----------------********************************************************
-
 .....................................................................................
 		  Dynamic params and Dynamic invocation services
 .....................................................................................
@@ -1053,7 +1052,6 @@ mol $ call math.add --a 45 --b 30
 >> Execution time:550μs
 >> Response:
 75
-.........................................................................................................................................................................................
 .....................................................................................
 			     Service Communication
 .....................................................................................
@@ -1157,7 +1155,6 @@ async function main() {
     }
 }
 main()
-....................................................................................
 ...................................................................................
 			 How brokers can talk each other?
 ...................................................................................
@@ -1426,7 +1423,6 @@ mol $ nodes
 
 mol $
 
-.....................................................................................
 .............................................................................................
 			  How to use other Message Brokers
 .....................................................................................
@@ -1447,7 +1443,6 @@ incase of nat
 const broker = new ServiceBroker({
     transporter:"nats://localhost:4222"
 })
-...........................................................................................................................................................................................
 ...................................................................................
 			Service Life cycle methods
 ....................................................................................
@@ -1565,8 +1560,359 @@ async function main() {
     }
 }
 main()
+.........................................................................................................................................................................................
+				  How to modularize the service information
 
 
+1.inheritance - service inheritance
+
+A Service has many options, those options may be repeated in many other services,
+like common settings.
+
+We can isolate common features / options into a separate service, we can reuse across multiple services -  Inheritance.
+
+How to implement inheritance in Moleculer?
+
+JavaScript can support only single inheritance, only one parent allowed for a child.
+
+Java like languages support interfaces for multi parent patterns, JavaScript has no such facility.
+
+JavaScript has a design pattern and implementation ,called "mixin", through mixin we can inherit many super objects.
+
+Moleculer has mixin property
+
+Use case:
+1.if you write any REST Controller.
+2.if you write database operations inside your service.
+etc...
+
+const { ServiceBroker } = require('moleculer')
+const broker = new ServiceBroker();
+
+//parent Services
+const hello = {
+    name: 'hello',
+    actions: {
+        sayHello() {
+            return 'Hello,From Parent';
+        }
+    }
+}
+const hai = {
+    name: 'hai',
+    actions: {
+        sayHai() {
+            return 'Hai, From Parent'
+        }
+    }
+}
+//Child Service
+broker.createService({
+    name: 'greeter',
+    mixins: [hello, hai]
+})
+
+async function main() {
+    try {
+        await broker.start()
+        broker.repl();
+    }
+    catch (err) {
+        console.log(err);
+    }
+
+}
+main();
+
+mol $ call greeter.sayHai
+>> Call 'greeter.sayHai' with params: {} with meta: { '$repl': true }
+>> Execution time:4ms
+>> Response:
+'Hai, From Parent'
+mol $ call greeter.sayHello
+>> Call 'greeter.sayHello' with params: {} with meta: { '$repl': true }
+>> Execution time:1ms
+>> Response:
+'Hello,From Parent'
+..........................................................................................................................................................................................
+						How to isolate server definitions outside main service(broker)
+
+
+1.write service in a separate file
+2.write service broker in  separate file
+
+broker definitions can be automated using moleculer-runner dependency which is part of core moleculer dependency
+
+Steps:
+
+1.broker definition
+
+ProjectRootDir/moleculer-runner.config.js
+
+//server broker definition
+module.exports = {
+    transporter: null
+}
+
+2.write service definitions
+
+module.exports = {
+    name: 'hello',
+    actions: {
+        sayHello() {
+            return "Hello"
+        },
+        sayHai() {
+            return "Hai"
+        }
+        
+    }
+}
+3.configuration in package.json file
+  "scripts": {
+    "start": "moleculer-runner --repl --hot services/app.service.js"
+  }
+
+we have added repl prompt and also activated hot reloading feature.
+
+
+
+
+
+...................................................................................
+				Types of Services
+
+Moleculer Provides two types of service
+
+1.Custom Services
+   The services are created with broker object
+2.Built services
+  The services are provided by Broker
+
+$node
+   Used for administration
+
+How to list all services using $node
+
+How to list all services using $node
+
+ call $node.services
+>> Call '$node.services' with params: {} with meta: { '$repl': true } with options: {}
+>> Execution time:1ms
+>> Response:
+[
+  {
+    name: '$node',
+    version: undefined,
+    fullName: '$node',
+    settings: {},
+    metadata: {},
+    local: true,
+    available: true,
+    nodes: [ 'laptop-r2tggfdl-17828' ]
+  },
+  {
+    name: 'greeter',
+    version: undefined,
+    fullName: 'greeter',
+    settings: { port: 3000, host: 'ibm.com' },
+    metadata: {},
+    local: true,
+    available: true,
+    nodes: [ 'laptop-r2tggfdl-17828' ]
+  }
+]
+
+$ call $node.list
+>> Call '$node.list' with params: {} with meta: { '$repl': true } with options: {}
+>> Execution time:1ms
+>> Response:
+[
+  {
+    id: 'laptop-r2tggfdl-17828',
+    instanceID: 'c7fd8078-2bf2-42ee-88f6-1fd20184eb3c',
+    available: true,
+    local: true,
+    lastHeartbeatTime: 0,
+    config: {},
+    client: { type: 'nodejs', version: '0.14.21', langVersion: 'v16.15.0' },
+    metadata: {},
+    ipList: [ '172.26.240.1', '172.22.176.1', '192.168.0.105' ],
+    port: null,
+    hostname: 'LAPTOP-R2TGGFDL',
+    udpAddress: null,
+    cpu: null,
+    cpuSeq: null,
+    seq: 3,
+    offlineSince: null
+  }
+]
+
+broker.createService({})
+
+
+//start:
+const { ServiceBroker } = require('moleculer')
+
+const broker = new ServiceBroker()
+
+broker.createService({
+    name: "hello",
+    version: 1,
+    actions: {
+        //here we write biz logic
+        sayHello() {
+            return 'Hello Old MicroService'
+        }
+    }
+})
+broker.createService({
+    name: "hello",
+    version: 2,
+    actions: {
+        //here we write biz logic
+        sayHello() {
+            return 'Hello New MicroService'
+        }
+    }
+})
+
+
+async function main() {
+    try {
+        //start service broker: start webserver
+        await broker.start()
+        broker.repl()
+
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+
+Testing:
+>> Call 'v1.hello.sayHello' with params: {} with meta: { '$repl': true }
+>> Execution time:3ms
+>> Response:
+'Hello Old MicroService'
+mol $ call v2.hello.sayHello
+>> Call 'v2.hello.sayHello' with params: {} with meta: { '$repl': true }
+>> Execution time:927μs
+>> Response:
+'Hello New MicroService'
+.......................................................................................................................................................................................
+							  Return Type and serialization
+.........................................................................................................................................................................................
+
+....................................................................................
+			 Return Data and Serialization
+....................................................................................
+Transporter needs a serializer module which serializes & deserializes the transferred packets. 
+The default serializer is the JSONSerializer but there are several built-in serializer.
+
+Types of Serializer:
+1.JSON serializer
+2.Avro serializer
+3.MsgPack serializer
+4.Notepack serializer
+5.ProtoBuf serializer
+6.Thrift serializer
+7.CBOR serializer
+
+
+//start:
+const { ServiceBroker } = require('moleculer')
+
+const broker = new ServiceBroker({
+    serializer: "JSON" // not necessary to set, because it is the default
+})
+
+broker.createService({
+    name: "products",
+    actions: {
+        //here we write biz logic
+        findAll(ctx) {
+            return ctx.call('inventory.findAll')
+        }
+    }
+})
+broker.createService({
+    name: "inventory",
+    actions: {
+        findAll() {
+            return [{
+                id: 1,
+                name: 'Iphone',
+                qty: 100,
+                price: 1000
+            }]
+        }
+    }
+})
+
+
+async function main() {
+    try {
+        //start service broker: start webserver
+        await broker.start()
+        broker.repl()
+
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
+....................................................................................
+			 Promises and Moleculer-Async Services
+....................................................................................
+//start:
+const { ServiceBroker } = require('moleculer')
+
+const broker = new ServiceBroker({
+    serializer: "JSON" // not necessary to set, because it is the default
+})
+
+broker.createService({
+    name: "products",
+    actions: {
+        //here we write biz logic
+        async findAll(ctx) {
+            return await ctx.call('inventory.findAll')
+        }
+    }
+})
+broker.createService({
+    name: "inventory",
+    actions: {
+        findAll() {
+            const products = [{
+                id: 1,
+                name: 'Iphone',
+                qty: 100,
+                price: 1000
+            }]
+            return new this.Promise((resolve, reject) => {
+                setTimeout(resolve, 1000, products)
+            })
+        }
+    }
+})
+
+
+async function main() {
+    try {
+        //start service broker: start webserver
+        await broker.start()
+        broker.repl()
+
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+main()
 
 
 
