@@ -1,0 +1,86 @@
+[2025-05-02T06:47:05.960Z] INFO  desktop-kaufcr7-26792/BROKER: Moleculer v0.14.35 is starting...
+[2025-05-02T06:47:05.961Z] INFO  desktop-kaufcr7-26792/BROKER: Namespace: <not defined>
+[2025-05-02T06:47:05.961Z] INFO  desktop-kaufcr7-26792/BROKER: Node ID: desktop-kaufcr7-26792
+[2025-05-02T06:47:05.961Z] INFO  desktop-kaufcr7-26792/REGISTRY: Strategy: RoundRobinStrategy
+[2025-05-02T06:47:05.962Z] INFO  desktop-kaufcr7-26792/REGISTRY: Discoverer: LocalDiscoverer
+[2025-05-02T06:47:05.969Z] INFO  desktop-kaufcr7-26792/BROKER: Serializer: JSONSerializer
+[2025-05-02T06:47:05.979Z] INFO  desktop-kaufcr7-26792/BROKER: Validator: FastestValidator
+[2025-05-02T06:47:05.980Z] INFO  desktop-kaufcr7-26792/BROKER: Registered 13 middleware(s).
+[2025-05-02T06:47:05.993Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: API Gateway server created.
+[2025-05-02T06:47:05.993Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: Register route to '/api'
+[2025-05-02T06:47:06.011Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: ♻ Generate aliases for '/api' route...
+[2025-05-02T06:47:06.011Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: 
+[2025-05-02T06:47:06.022Z] INFO  desktop-kaufcr7-26792/REGISTRY: '$node' service is registered.
+[2025-05-02T06:47:06.023Z] INFO  desktop-kaufcr7-26792/REGISTRY: 'products' service is registered.
+[2025-05-02T06:47:06.023Z] INFO  desktop-kaufcr7-26792/$NODE: Service '$node' started.
+[2025-05-02T06:47:06.023Z] INFO  desktop-kaufcr7-26792/PRODUCTS: Service 'products' started.
+[2025-05-02T06:47:06.028Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: API Gateway listening on http://localhost:3000
+[2025-05-02T06:47:06.029Z] INFO  desktop-kaufcr7-26792/REGISTRY: 'ApiGateWay' service is registered.
+[2025-05-02T06:47:06.030Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: Service 'ApiGateWay' started.
+[2025-05-02T06:47:06.030Z] INFO  desktop-kaufcr7-26792/BROKER: ✔ ServiceBroker with 3 service(s) started successfully in 19ms.
+[2025-05-02T06:47:06.532Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: ♻ Generate aliases for '/api' route...
+[2025-05-02T06:47:06.541Z] INFO  desktop-kaufcr7-26792/APIGATEWAY:      GET /api/products => products.list
+[2025-05-02T06:47:06.542Z] INFO  desktop-kaufcr7-26792/APIGATEWAY:      GET /api/products/:id => products.get
+[2025-05-02T06:47:06.542Z] INFO  desktop-kaufcr7-26792/APIGATEWAY:     POST /api/products => products.save
+[2025-05-02T06:47:06.542Z] INFO  desktop-kaufcr7-26792/APIGATEWAY:      PUT /api/products/:id => products.update
+[2025-05-02T06:47:06.543Z] INFO  desktop-kaufcr7-26792/APIGATEWAY:   DELETE /api/products/:id => products.remove
+[2025-05-02T06:47:06.543Z] INFO  desktop-kaufcr7-26792/APIGATEWAY:      GET /api/ApiGateWay/list-aliases => ApiGateWay.listAliases
+[2025-05-02T06:47:38.261Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: => GET /api/ApiGateWay/list-aliases
+[2025-05-02T06:47:38.263Z] INFO  desktop-kaufcr7-26792/APIGATEWAY:    Call 'ApiGateWay.listAliases' action
+[2025-05-02T06:47:38.266Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: <= 200 GET /api/ApiGateWay/list-aliases [+5.731 ms]
+[2025-05-02T06:47:56.607Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: => GET /api/products/1
+[2025-05-02T06:47:56.607Z] INFO  desktop-kaufcr7-26792/APIGATEWAY:    Call 'products.get' action
+[2025-05-02T06:47:56.608Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: <= 200 GET /api/products/1 [+0.907 ms]
+[2025-05-02T06:49:47.248Z] INFO  desktop-kaufcr7-26792/$NODE: Service '$node' stopped.
+[2025-05-02T06:49:47.248Z] INFO  desktop-kaufcr7-26792/PRODUCTS: Service 'products' stopped.
+[2025-05-02T06:49:47.248Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: API Gateway stopped!
+[2025-05-02T06:49:47.248Z] INFO  desktop-kaufcr7-26792/APIGATEWAY: Service 'ApiGateWay' stopped.
+[2025-05-02T06:49:47.249Z] INFO  desktop-kaufcr7-26792/BROKER: ServiceBroker is stopped. Good bye.
+[2025-05-02T06:49:49.182Z] INFO  desktop-kaufcr7-28772/BROKER: Moleculer v0.14.35 is starting...
+[2025-05-02T06:49:49.182Z] INFO  desktop-kaufcr7-28772/BROKER: Namespace: <not defined>
+[2025-05-02T06:49:49.182Z] INFO  desktop-kaufcr7-28772/BROKER: Node ID: desktop-kaufcr7-28772
+[2025-05-02T06:49:49.183Z] INFO  desktop-kaufcr7-28772/REGISTRY: Strategy: RoundRobinStrategy
+[2025-05-02T06:49:49.184Z] INFO  desktop-kaufcr7-28772/REGISTRY: Discoverer: LocalDiscoverer
+[2025-05-02T06:49:49.192Z] INFO  desktop-kaufcr7-28772/BROKER: Serializer: JSONSerializer
+[2025-05-02T06:49:49.202Z] INFO  desktop-kaufcr7-28772/BROKER: Validator: FastestValidator
+[2025-05-02T06:49:49.203Z] INFO  desktop-kaufcr7-28772/BROKER: Registered 13 middleware(s).
+[2025-05-02T06:49:49.217Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: API Gateway server created.
+[2025-05-02T06:49:49.217Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: Register route to '/api'
+[2025-05-02T06:49:49.234Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: ♻ Generate aliases for '/api' route...
+[2025-05-02T06:49:49.235Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: 
+[2025-05-02T06:49:49.246Z] INFO  desktop-kaufcr7-28772/REGISTRY: '$node' service is registered.
+[2025-05-02T06:49:49.247Z] INFO  desktop-kaufcr7-28772/REGISTRY: 'products' service is registered.
+[2025-05-02T06:49:49.248Z] INFO  desktop-kaufcr7-28772/$NODE: Service '$node' started.
+[2025-05-02T06:49:49.248Z] INFO  desktop-kaufcr7-28772/PRODUCTS: Service 'products' started.
+[2025-05-02T06:49:49.252Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: API Gateway listening on http://localhost:3000
+[2025-05-02T06:49:49.254Z] INFO  desktop-kaufcr7-28772/REGISTRY: 'ApiGateWay' service is registered.
+[2025-05-02T06:49:49.254Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: Service 'ApiGateWay' started.
+[2025-05-02T06:49:49.254Z] INFO  desktop-kaufcr7-28772/BROKER: ✔ ServiceBroker with 3 service(s) started successfully in 19ms.
+[2025-05-02T06:49:49.756Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: ♻ Generate aliases for '/api' route...
+[2025-05-02T06:49:49.764Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:      GET /api/products => products.list
+[2025-05-02T06:49:49.766Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:      GET /api/products/:id => products.get
+[2025-05-02T06:49:49.766Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:     POST /api/products => products.save
+[2025-05-02T06:49:49.766Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:      PUT /api/products/:id => products.update
+[2025-05-02T06:49:49.767Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:   DELETE /api/products/:id => products.remove
+[2025-05-02T06:49:49.767Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:      GET /api/ApiGateWay/list-aliases => ApiGateWay.listAliases
+[2025-05-02T06:50:00.563Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: => GET /api/products
+[2025-05-02T06:50:00.565Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:    Call 'products.list' action
+[2025-05-02T06:50:00.565Z] INFO  desktop-kaufcr7-28772/PRODUCTS: Find All method is called
+[2025-05-02T06:50:00.568Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: <= 200 GET /api/products [+5.077 ms]
+[2025-05-02T06:51:57.309Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: => GET /api/products
+[2025-05-02T06:51:57.309Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:    Call 'products.list' action
+[2025-05-02T06:51:57.309Z] INFO  desktop-kaufcr7-28772/PRODUCTS: Find All method is called
+[2025-05-02T06:51:57.309Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: <= 200 GET /api/products [+0.833 ms]
+[2025-05-02T06:51:58.939Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: => GET /api/products
+[2025-05-02T06:51:58.939Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:    Call 'products.list' action
+[2025-05-02T06:51:58.939Z] INFO  desktop-kaufcr7-28772/PRODUCTS: Find All method is called
+[2025-05-02T06:51:58.940Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: <= 200 GET /api/products [+0.633 ms]
+[2025-05-02T06:51:59.955Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: => GET /api/products
+[2025-05-02T06:51:59.955Z] INFO  desktop-kaufcr7-28772/APIGATEWAY:    Call 'products.list' action
+[2025-05-02T06:51:59.955Z] INFO  desktop-kaufcr7-28772/PRODUCTS: Find All method is called
+[2025-05-02T06:51:59.956Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: <= 200 GET /api/products [+0.578 ms]
+[2025-05-02T06:59:11.436Z] INFO  desktop-kaufcr7-28772/$NODE: Service '$node' stopped.
+[2025-05-02T06:59:11.437Z] INFO  desktop-kaufcr7-28772/PRODUCTS: Service 'products' stopped.
+[2025-05-02T06:59:11.437Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: API Gateway stopped!
+[2025-05-02T06:59:11.438Z] INFO  desktop-kaufcr7-28772/APIGATEWAY: Service 'ApiGateWay' stopped.
+[2025-05-02T06:59:11.440Z] INFO  desktop-kaufcr7-28772/BROKER: ServiceBroker is stopped. Good bye.
