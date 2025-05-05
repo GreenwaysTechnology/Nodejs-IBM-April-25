@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "ioredis": "^5.6.1",
     "moleculer": "^0.14.35",
     "nats": "^2.29.3"
   },
